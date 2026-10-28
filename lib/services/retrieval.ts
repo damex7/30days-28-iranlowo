@@ -78,13 +78,24 @@ repaired AS (
          END AS word
     FROM words
 ),
-q AS (
+q AS MATERIALIZED (
   SELECT websearch_to_tsquery('english', $1::text) AS strict,
          -- plainto_tsquery stems and drops stop words; swapping & for | turns
          -- "all of these words" into "any of these words".
          replace(plainto_tsquery('english', COALESCE(string_agg(word, ' ' ORDER BY ord), ''))::text, ' & ', ' | ')::tsquery AS loose,
          COALESCE(string_agg(word, ' ' ORDER BY ord), '') AS fixed_text
     FROM repaired
+),
+-- Candidates come from three index lookups. "(SELECT loose FROM q)" is a
+-- one-row subquery, computed once up front (an InitPlan), so Postgres can
+-- use its value inside an index condition. Joining q row-by-row instead
+-- would force it to read every chunk and filter afterwards.
+candidates AS (
+  SELECT c.id FROM article_chunks c WHERE c.search @@ (SELECT loose FROM q)
+  UNION
+  SELECT c.id FROM article_chunks c WHERE c.heading % $1::text
+  UNION
+  SELECT c.id FROM article_chunks c JOIN articles a ON a.id = c.article_id WHERE a.title % $1::text
 ),
 scored AS (
   SELECT c.id, a.id AS article_id, a.slug, a.title, a.category, c.heading, c.content,
@@ -94,12 +105,12 @@ scored AS (
          + 0.30 * greatest(word_similarity(c.heading, q.fixed_text), word_similarity(a.title, q.fixed_text))
          )::numeric, 6) AS score,
          q.loose
-    FROM article_chunks c
+    FROM candidates k
+    JOIN article_chunks c ON c.id = k.id
     JOIN articles a ON a.id = c.article_id
    CROSS JOIN q
    WHERE a.status = 'published'
      AND ($2::text IS NULL OR a.category = $2::text)
-     AND (c.search @@ q.loose OR c.heading % $1::text OR a.title % $1::text)
 )
 SELECT id::int AS chunk_id, article_id, slug, title, category, heading, content, score::float8 AS score,
        ts_headline('english', content, loose, 'MaxWords=28, MinWords=12, StartSel=<<, StopSel=>>') AS snippet
