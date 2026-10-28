@@ -17,7 +17,16 @@ export const TZ = "Africa/Lagos";
 const dateTime = new Intl.DateTimeFormat("en-NG", { timeZone: TZ, day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
 const dateOnly = new Intl.DateTimeFormat("en-NG", { timeZone: TZ, weekday: "short", day: "numeric", month: "short", year: "numeric" });
 
-const toDate = (v: string | Date) => (v instanceof Date ? v : new Date(v.includes("T") || v.includes(" ") ? v.replace(" ", "T") : `${v}T12:00:00+01:00`));
+/**
+ * Accepts Date objects, ISO strings, Postgres timestamptz text
+ * ("2026-10-26 18:22:11.12+00", whose "+00" offset JS can't parse) and
+ * plain dates ("2026-10-30", read as midday in Lagos).
+ */
+function toDate(v: string | Date): Date {
+  if (v instanceof Date) return v;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return new Date(`${v}T12:00:00+01:00`);
+  return new Date(v.replace(" ", "T").replace(/([+-]\d{2})$/, "$1:00"));
+}
 
 export const formatDateTime = (v: string | Date) => dateTime.format(toDate(v));
 /** A calendar date ("2026-10-30") shown as a Lagos date. */

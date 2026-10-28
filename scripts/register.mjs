@@ -17,9 +17,18 @@ function candidates(base) {
 
 registerHooks({
   resolve(specifier, context, next) {
+    // Next's subpath entry points (next/headers, next/cache…) are CommonJS
+    // files without an exports map, so ESM needs the explicit ".js".
+    if (/^next\/[a-z-]+$/.test(specifier)) return next(`${specifier}.js`, context);
+    // React's server build is CommonJS whose named exports (cache) Node can't
+    // detect from ESM; our own files get a tiny re-exporting shim instead.
+    const shim = pathToFileURL(join(root, "scripts", "react-shim.mjs")).href;
+    if (specifier === "react" && context.parentURL !== shim && !context.parentURL?.includes("node_modules")) {
+      return next(shim, context);
+    }
     let base = null;
     if (specifier.startsWith("@/")) base = join(root, specifier.slice(2));
-    else if ((specifier.startsWith("./") || specifier.startsWith("../")) && context.parentURL?.startsWith("file:")) {
+    else if ((specifier.startsWith("./") || specifier.startsWith("../")) && context.parentURL?.startsWith("file:") && !context.parentURL.includes("node_modules")) {
       base = join(dirname(fileURLToPath(context.parentURL)), specifier);
     }
     if (base) {
