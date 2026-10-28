@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+/*
+  "Shop counter" palette: paper and warm white like a well-kept receipt
+  pad, ink for text, iroko green (a West African hardwood) for the brand
+  and every action, slate for quieter text and assistant messages, sand for
+  hairlines. Dark mode is a deep green-black with the green lightened so
+  text and buttons keep at least 4.5:1 contrast (checked by
+  npm run check:contrast).
+*/
+:root {
+  color-scheme: light;
+  --paper: #f2f0ea;
+  --card: #fbfaf6;
+  --ink: #20221e;
+  --muted: #4a5560;
+  --iroko: #2f5a3d;
+  --iroko-hover: #24472f;
+  --on-iroko: #fbfaf6;
+  --iroko-soft: #e2e9e0;
+  --sand: #d8d0be;
+  --line-strong: #7d7666;
+  --bubble-customer: #2f5a3d;
+  --on-bubble-customer: #fbfaf6;
+  --warn: #6f5310;
+  --warn-soft: #f1e7c9;
+  --danger: #8e3343;
+  --danger-soft: #f3e1e2;
+  --focus: #2f5a3d;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #111814;
+  --card: #18211b;
+  --ink: #e7ebe4;
+  --muted: #aab5bc;
+  --iroko: #8cc59e;
+  --iroko-hover: #a5d6b3;
+  --on-iroko: #0f1712;
+  --iroko-soft: #213226;
+  --sand: #34413a;
+  --line-strong: #7c8a80;
+  --bubble-customer: #2b4d36;
+  --on-bubble-customer: #eef3ec;
+  --warn: #e6c77f;
+  --warn-soft: #33301f;
+  --danger: #f1a7b0;
+  --danger-soft: #3a2328;
+  --focus: #a5d6b3;
+}
+
+/* Without JavaScript, follow the system setting. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+    --paper: #111814;
+    --card: #18211b;
+    --ink: #e7ebe4;
+    --muted: #aab5bc;
+    --iroko: #8cc59e;
+    --iroko-hover: #a5d6b3;
+    --on-iroko: #0f1712;
+    --iroko-soft: #213226;
+    --sand: #34413a;
+    --line-strong: #7c8a80;
+    --bubble-customer: #2b4d36;
+    --on-bubble-customer: #eef3ec;
+    --warn: #e6c77f;
+    --warn-soft: #33301f;
+    --danger: #f1a7b0;
+    --danger-soft: #3a2328;
+    --focus: #a5d6b3;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-iroko: var(--iroko);
+  --color-iroko-hover: var(--iroko-hover);
+  --color-on-iroko: var(--on-iroko);
+  --color-iroko-soft: var(--iroko-soft);
+  --color-sand: var(--sand);
+  --color-line-strong: var(--line-strong);
+  --color-bubble-customer: var(--bubble-customer);
+  --color-on-bubble-customer: var(--on-bubble-customer);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-display: var(--font-alegreya), Georgia, serif;
+  --font-sans: var(--font-source-sans), system-ui, sans-serif;
+  --radius-bubble: 1.1rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  a {
+    color: var(--iroko);
+    text-underline-offset: 0.18em;
+  }
+  /* Visible focus everywhere: a 3px ring with an offset, in a colour that
+     passes 3:1 against both the page and cards. */
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: var(--iroko-soft);
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 0.6rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: background-color 120ms;
+  }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--iroko);
+    color: var(--on-iroko);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--iroko-hover);
+  }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--ink);
+    border-color: var(--line-strong);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--iroko-soft);
+  }
+  .btn-quiet {
+    background: transparent;
+    color: var(--iroko);
+    padding-inline: 0.6rem;
+  }
+  .btn-quiet:hover:not(:disabled) {
+    background: var(--iroko-soft);
+  }
+  .field {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.55rem;
+    border: 1.5px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink);
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--sand);
+    border-radius: 0.9rem;
+  }
+  .prose-help h2 {
+    font-size: 1.3rem;
+    margin-top: 1.6rem;
+    margin-bottom: 0.4rem;
+  }
+  .prose-help p,
+  .prose-help ul,
+  .prose-help ol {
+    margin-bottom: 0.8rem;
+  }
+  .prose-help ul {
+    list-style: disc;
+    padding-left: 1.3rem;
+  }
+  .prose-help ol {
+    list-style: decimal;
+    padding-left: 1.3rem;
+  }
+  .prose-help strong {
+    font-weight: 700;
+  }
+  .skeleton {
+    background: linear-gradient(90deg, var(--sand) 0%, var(--card) 50%, var(--sand) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite linear;
+    border-radius: 0.5rem;
+    opacity: 0.55;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes typing {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.typing-dot {
+  animation: typing 1.2s infinite;
+}
+
+/* Respect "reduce motion": no shimmer, no bouncing dots (a static
+   "Assistant is typing…" label still shows). */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .typing-dot {
+    animation: none;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
+}
