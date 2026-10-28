@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/logo";
+import { DemoButtons } from "@/components/demo-buttons";
 import { CATEGORIES, CATEGORY_LABELS } from "@/lib/validation/knowledge";
 
 export default function Home() {
@@ -40,6 +41,16 @@ export default function Home() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="card grid grid-cols-1 gap-5 p-5 md:grid-cols-2" aria-labelledby="demo">
+        <div>
+          <h2 id="demo" className="text-2xl">Try the demo</h2>
+          <p className="mt-2 text-muted">
+            Chat as a customer with your own sample orders, or look around the agent inbox. No password needed; demo data is deleted after a day. The banner at the top says which AI is answering.
+          </p>
+        </div>
+        <DemoButtons />
       </section>
 
       <section className="card p-5" aria-labelledby="how">

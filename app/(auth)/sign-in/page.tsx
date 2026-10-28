@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { z } from "zod";
 import { SignInForm } from "./sign-in-form";
+import { DemoButtons } from "@/components/demo-buttons";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -14,7 +15,7 @@ const search = z.object({
 
 export default function SignInPage({ searchParams }: PageProps<"/sign-in">) {
   return (
-    <div className="mx-auto max-w-md">
+    <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
       <section className="card p-5 sm:p-6" aria-labelledby="signin-title">
         <h1 id="signin-title" className="mb-4 text-3xl">Sign in</h1>
         <Suspense fallback={<div className="skeleton h-48" />}>
@@ -23,6 +24,11 @@ export default function SignInPage({ searchParams }: PageProps<"/sign-in">) {
         <p className="mt-5 text-sm">
           New here? <Link href="/sign-up">Create an account</Link>
         </p>
+      </section>
+      <section className="card p-5 sm:p-6" aria-labelledby="demo-title">
+        <h2 id="demo-title" className="mb-2 text-2xl">Just looking?</h2>
+        <p className="mb-4 text-muted">No password needed. Demo data is deleted after a day.</p>
+        <DemoButtons />
       </section>
     </div>
   );
