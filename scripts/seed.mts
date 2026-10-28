@@ -316,10 +316,10 @@ async function seedConversations(tx: Db, ids: Record<string, string>) {
     const assistantIds: number[] = [];
     let previousCustomer: number | null = null;
     for (const [role, minutesAgo, content, extra] of c.messages) {
-      const citations = [];
+      const citations: { ref: number; chunkId: number; slug: string; title: string; anchor: string }[] = [];
       for (const slug of extra?.cite ?? []) {
         const chunk = await chunkFor(slug);
-        if (chunk) citations.push({ chunkId: chunk.id, slug, title: chunk.title, anchor: "" });
+        if (chunk) citations.push({ ref: citations.length + 1, chunkId: chunk.id, slug, title: chunk.title, anchor: "" });
       }
       const rows: { id: number }[] = await tx.query<{ id: number }>(
         `INSERT INTO messages (conversation_id, customer_id, sender_role, sender_id, content, citations, is_draft, client_message_id, in_reply_to, created_at)

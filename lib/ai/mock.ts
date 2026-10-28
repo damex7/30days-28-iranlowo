@@ -94,7 +94,8 @@ function phraseToolResults(turn: Extract<Turn, { role: "tool" }>): string {
 function answer(request: GenerateRequest): { text?: string; calls?: ToolCall[] } {
   const last = request.turns.at(-1);
   const toolsOn = (request.tools?.length ?? 0) > 0;
-  if (scenario === "tool_loop" && toolsOn) return { calls: [{ id: `loop_${request.turns.length}`, name: "list_my_recent_orders", args: {} }] };
+  // A misbehaving model: keeps asking for tools, even when none are offered.
+  if (scenario === "tool_loop") return { calls: [{ id: `loop_${request.turns.length}`, name: "list_my_recent_orders", args: {} }] };
   if (last?.role === "tool") return { text: phraseToolResults(last) };
 
   const userText = lastUser(request.turns);
