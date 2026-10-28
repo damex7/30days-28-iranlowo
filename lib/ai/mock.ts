@@ -49,7 +49,10 @@ function references(text: string) {
 function firstSentences(text: string, n: number) {
   const clean = text.replace(/\s+/g, " ").replace(/\*\*/g, "").trim();
   const parts = clean.match(/[^.!?]+[.!?]+/g) ?? [clean];
-  return parts.slice(0, n).join(" ").trim();
+  return parts
+    .slice(0, n)
+    .map((p) => p.trim())
+    .join(" ");
 }
 
 const STATUS_LABEL: Record<string, string> = {

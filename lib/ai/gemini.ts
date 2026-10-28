@@ -1,7 +1,7 @@
 import "server-only";
 import { ApiError, GoogleGenAI, type Content, type Part } from "@google/genai";
 import type { AiProvider, GenerateRequest, StreamChunk, ToolCall, Turn } from "@/lib/ai/provider";
-import { ProviderError, ProviderRateLimitError, ProviderTimeoutError } from "@/lib/ai/errors";
+import { ProviderError, ProviderRateLimitError, ProviderTimeoutError, ProviderUnavailableError } from "@/lib/ai/errors";
 
 // The only file that imports the Gemini SDK. It translates our normalised
 // turns into Gemini "contents", streams the reply back as our StreamChunks,
@@ -45,6 +45,10 @@ function normaliseError(error: unknown, signal: AbortSignal | undefined): Error 
     return new ProviderError(`Gemini error ${error.status}`, `http_${error.status}`, { cause: error });
   }
   if (error instanceof Error && /429|RESOURCE_EXHAUSTED/.test(error.message)) return new ProviderRateLimitError(undefined, { cause: error });
+  const code = (error as { cause?: { code?: unknown } })?.cause?.code;
+  if (error instanceof TypeError || (typeof code === "string" && /^(ECONN|ENOTFOUND|ETIMEDOUT|EAI_AGAIN|UND_ERR)/.test(code))) {
+    return new ProviderUnavailableError(`Gemini unreachable (${typeof code === "string" ? code : "network"})`, { cause: error });
+  }
   return new ProviderError("Gemini request failed", "provider_error", { cause: error });
 }
 

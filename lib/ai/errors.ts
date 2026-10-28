@@ -24,3 +24,11 @@ export class ProviderTimeoutError extends ProviderError {
     super(message, "timeout", options);
   }
 }
+
+/** The provider couldn't be reached at all (DNS, TLS reset, connect timeout). */
+export class ProviderUnavailableError extends ProviderError {
+  override name = "ProviderUnavailableError";
+  constructor(message = "The AI provider can't be reached", options?: ErrorOptions) {
+    super(message, "network", options);
+  }
+}

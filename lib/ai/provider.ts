@@ -90,8 +90,15 @@ export function providerInfo(): ProviderInfo {
 }
 
 let cached: { key: string; provider: AiProvider } | null = null;
+let override: AiProvider | null = null;
+
+/** Check script only: swap in a fake provider (e.g. one that always returns 429). */
+export function setProviderOverride(provider: AiProvider | null) {
+  override = provider;
+}
 
 export async function getProvider(): Promise<AiProvider> {
+  if (override) return override;
   const info = providerInfo();
   if (cached?.key === info.name) return cached.provider;
   const provider =
