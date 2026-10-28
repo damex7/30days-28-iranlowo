@@ -69,11 +69,15 @@ export function MessageItem({ m, viewer = "customer", footer }: { m: MessageView
         <div className="mt-2 border-t border-sand pt-2 text-sm">
           <p className="font-semibold">Sources</p>
           <ol className="mt-0.5 space-y-0.5">
-            {m.citations.map((c) => (
-              <li key={c.ref}>
-                [{c.ref}] <Link href={`/help/${c.slug}${c.anchor ? `#${c.anchor}` : ""}`}>{c.title}</Link>
-              </li>
-            ))}
+            {/* Two cited chunks of one article become one source line: [2][4] Title. */}
+            {[...Map.groupBy(m.citations, (c) => c.slug).values()].map((group) => {
+              const first = group[0]!;
+              return (
+                <li key={first.slug}>
+                  {group.map((c) => `[${c.ref}]`).join("")} <Link href={`/help/${first.slug}${first.anchor ? `#${first.anchor}` : ""}`}>{first.title}</Link>
+                </li>
+              );
+            })}
           </ol>
         </div>
       )}
