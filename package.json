@@ -1,0 +1,41 @@
+{
+  "name": "iranlowo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3028",
+    "build": "next build",
+    "start": "next start -p 3028",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "next typegen",
+    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
+    "db:seed": "node --env-file=.env.local --conditions=react-server --import ./scripts/register.mjs scripts/seed.mts",
+    "db:explain": "node --env-file=.env.local --conditions=react-server --import ./scripts/register.mjs scripts/explain.mts",
+    "check:support": "node --env-file=.env.local --conditions=react-server --import ./scripts/register.mjs scripts/check-support.mts",
+    "check:contrast": "node scripts/check-contrast.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^2.31.0",
+    "@neondatabase/serverless": "^1.2.0",
+    "next": "16.4.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "resend": "^6.35.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}
