@@ -245,7 +245,6 @@ await check("a provider rate-limit error falls back to the mock answer and logs 
   process.env.GEMINI_API_KEY ||= "fake-key-for-check";
   setProviderOverride({
     name: "gemini",
-    // eslint-disable-next-line require-yield
     async *stream() {
       throw new ProviderRateLimitError("simulated 429");
     },

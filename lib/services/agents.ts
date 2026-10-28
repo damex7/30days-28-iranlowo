@@ -6,7 +6,6 @@ import { maskOrderNumber, maskPII } from "@/lib/ai/guardrails";
 import { DRAFT_PROMPT_VERSION, DRAFT_SYSTEM, referenceBlocks, transcript } from "@/lib/ai/prompts";
 import { insertRuns } from "@/lib/repos/ai-runs";
 import { recordAudit, listAuditFor } from "@/lib/repos/audit";
-import { findConversation } from "@/lib/repos/conversations";
 import { assignAgent, deleteDraftsOf, listCanned, listInbox, recordAgentReply, resolveByAgent, type InboxFilter } from "@/lib/repos/inbox";
 import { insertMessage, listMessages, type MessageRow } from "@/lib/repos/messages";
 import { listOrdersForCustomer } from "@/lib/repos/orders";
