@@ -56,9 +56,9 @@ export type SearchOptions = {
 };
 
 /** Below this the help centre shows "no results". */
-export const HELP_MIN_SCORE = 0.08;
-/** Below this the assistant treats retrieval as "nothing found" (calibrated with npm run check:support). */
-export const ASSISTANT_MIN_SCORE = 0.16;
+export const HELP_MIN_SCORE = 0.2;
+/** Below this the assistant treats retrieval as "nothing found". Calibrated on the seed: on-topic questions (typos included) score 0.44+, off-topic ones 0.18 or less. */
+export const ASSISTANT_MIN_SCORE = 0.3;
 
 export const SEARCH_SQL = `
 WITH words AS (
